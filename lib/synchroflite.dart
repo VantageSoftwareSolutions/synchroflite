@@ -255,6 +255,7 @@ class Synchroflite extends SqlCrdt with SqfliteCrdtImplMixin {
       }
     });
 
+    print('syncroflite Merging changeset: $count changes');
     if (count > 0) {
       await onDatasetChanged(changeset.keys, hlc);
     }
