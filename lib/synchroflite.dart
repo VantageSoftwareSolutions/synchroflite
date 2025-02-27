@@ -210,4 +210,53 @@ class Synchroflite extends SqlCrdt with SqfliteCrdtImplMixin {
   Future<void> execute(String sql, [List<Object?>? args]) async {
     return _innerExecute(_db, sql, () => canonicalTime.increment(), args ?? []);
   }
+
+  @override
+  Future<void> merge(CrdtChangeset changeset) async {
+    if (changeset.recordCount == 0) return;
+
+    // Validate changeset and get new canonical time
+    final hlc = validateChangeset(changeset);
+
+    var count = 0;
+    // Merge records
+    await _db.transaction((txn) async {
+      for (final entry in changeset.entries) {
+        final table = entry.key;
+        final records = entry.value;
+        final keys = (await txn.getPrimaryKeys(table)).join(', ');
+
+        for (final record in records) {
+          // Convert record's HLC from String if necessary
+          record['node_id'] = (record['hlc'] is String
+                  ? (record['hlc'] as String).toHlc
+                  : (record['hlc'] as Hlc))
+              .nodeId;
+          record['modified'] = hlc.toString();
+
+          final columns = record.keys.join(', ');
+          final placeholders =
+              List.generate(record.length, (i) => '?${i + 1}').join(', ');
+
+          var i = 1;
+          final updateStatement =
+              record.keys.map((e) => '$e = ?${i++}').join(', \n');
+
+          final sql = '''
+            INSERT INTO $table ($columns)
+              VALUES ($placeholders)
+            ON CONFLICT ($keys) DO
+              UPDATE SET $updateStatement
+            WHERE excluded.hlc > $table.hlc
+          ''';
+          count +=
+              await txn.rawInsert(sql, record.values.map(_convert).toList());
+        }
+      }
+    });
+
+    if (count > 0) {
+      await onDatasetChanged(changeset.keys, hlc);
+    }
+  }
 }
