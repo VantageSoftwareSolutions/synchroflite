@@ -10,13 +10,11 @@ class SqliteApi extends DatabaseApi {
 
   SqliteApi(this._db);
 
-  @override
   Future<Iterable<String>> getTables() async => (await _db.rawQuery('''
         SELECT name FROM sqlite_schema
         WHERE type ='table' AND name NOT LIKE 'sqlite_%'
       ''')).map((e) => e['name'] as String);
 
-  @override
   Future<Iterable<String>> getPrimaryKeys(String table) async =>
       (await _db.rawQuery('''
          SELECT name FROM pragma_table_info(?1)

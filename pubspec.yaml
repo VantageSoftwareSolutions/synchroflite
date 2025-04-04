@@ -1,6 +1,6 @@
 name: synchroflite
 description: Dart implementation of Conflict-free Replicated Data Types (CRDTs) using Sqlite
-version: 0.1.4
+version: 0.1.6
 homepage: https://github.com/JanezStupar/synchroflite
 repository: https://github.com/JanezStupar/synchroflite.git
 issue_tracker: https://github.com/JanezStupar/synchroflite/issues
@@ -12,13 +12,13 @@ dependencies:
   sqflite_common: ^2.5.0
   sqflite_common_ffi: ^2.3.0+2
   sqflite_common_ffi_web: ^0.4.0
-  sql_crdt: ^2.1.6
+  sql_crdt: ^3.0.2
   json_annotation: ^4.8.1
-  sqlparser: ^0.34.0
+  sqlparser: ^0.39.2
   source_span: ^1.10.0
   collection: ^1.17.2
 
 dev_dependencies:
-  lints: ^3.0.0
+  lints: ^4.0.0
   pedantic: ^1.11.1
   test: any

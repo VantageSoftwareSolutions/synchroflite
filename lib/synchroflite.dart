@@ -40,8 +40,8 @@ class Synchroflite extends SqlCrdt with SqfliteCrdtImplMixin {
     String path, {
     bool singleInstance = true,
     int? version,
-    FutureOr<void> Function(BaseCrdt crdt, int version)? onCreate,
-    FutureOr<void> Function(BaseCrdt crdt, int from, int to)? onUpgrade,
+    FutureOr<void> Function(SqlCrdt crdt, int version)? onCreate,
+    FutureOr<void> Function(SqlCrdt crdt, int from, int to)? onUpgrade,
     bool migrate = false,
   }) =>
       _open(path, false, singleInstance, version, onCreate, onUpgrade,
@@ -52,8 +52,8 @@ class Synchroflite extends SqlCrdt with SqfliteCrdtImplMixin {
   static Future<Synchroflite> openInMemory({
     bool singleInstance = false,
     int? version,
-    FutureOr<void> Function(BaseCrdt crdt, int version)? onCreate,
-    FutureOr<void> Function(BaseCrdt crdt, int from, int to)? onUpgrade,
+    FutureOr<void> Function(SqlCrdt crdt, int version)? onCreate,
+    FutureOr<void> Function(SqlCrdt crdt, int from, int to)? onUpgrade,
     bool migrate = false,
   }) =>
       _open(null, true, singleInstance, version, onCreate, onUpgrade,
@@ -64,8 +64,8 @@ class Synchroflite extends SqlCrdt with SqfliteCrdtImplMixin {
       bool inMemory,
       bool singleInstance,
       int? version,
-      FutureOr<void> Function(BaseCrdt crdt, int version)? onCreate,
-      FutureOr<void> Function(BaseCrdt crdt, int from, int to)? onUpgrade,
+      FutureOr<void> Function(SqlCrdt crdt, int version)? onCreate,
+      FutureOr<void> Function(SqlCrdt crdt, int from, int to)? onUpgrade,
       {bool migrate = false}) async {
     if (sqliteCrdtIsWeb && !inMemory && path!.contains('/')) {
       path = path.substring(path.lastIndexOf('/') + 1);
@@ -85,11 +85,12 @@ class Synchroflite extends SqlCrdt with SqfliteCrdtImplMixin {
         version: version,
         onCreate: onCreate == null
             ? null
-            : (db, version) => onCreate.call(BaseCrdt(SqfliteApi(db)), version),
+            : (db, version) =>
+                onCreate.call(Synchroflite(SqfliteApi(db)), version),
         onUpgrade: onUpgrade == null
             ? null
             : (db, from, to) =>
-                onUpgrade.call(BaseCrdt(SqfliteApi(db)), from, to),
+                onUpgrade.call(Synchroflite(SqfliteApi(db)), from, to),
       ),
     );
 
@@ -154,8 +155,7 @@ class Synchroflite extends SqlCrdt with SqfliteCrdtImplMixin {
     });
     // Notify on changes
     if (transaction.affectedTables.isNotEmpty) {
-      await onDatasetChanged(
-          transaction.affectedTables, transaction.canonicalTime);
+      await onDatasetChanged(transaction.affectedTables, transaction.hlc);
     }
   }
 
@@ -209,5 +209,15 @@ class Synchroflite extends SqlCrdt with SqfliteCrdtImplMixin {
   @override
   Future<void> execute(String sql, [List<Object?>? args]) async {
     return _innerExecute(_db, sql, () => canonicalTime.increment(), args ?? []);
+  }
+
+  @override
+  Future<Iterable<String>> getTableKeys(String table) async {
+    return _db.getPrimaryKeys(table);
+  }
+
+  @override
+  Future<Iterable<String>> getTables() async {
+    return await _db.getTables();
   }
 }

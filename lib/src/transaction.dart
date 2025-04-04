@@ -4,8 +4,7 @@
 // SPDX-License-Identifier: Apache-2.0
 part of 'package:synchroflite/synchroflite.dart';
 
-class TransactionSynchroflite extends TransactionCrdt
-    with SqfliteCrdtImplMixin {
+class TransactionSynchroflite extends CrdtExecutor with SqfliteCrdtImplMixin {
   final SqfliteApi _txn;
 
   TransactionSynchroflite(this._txn, canonicalTime)
@@ -15,7 +14,7 @@ class TransactionSynchroflite extends TransactionCrdt
   Future<R> _rawInsert<T, R>(T db, InsertStatement statement,
       [List<Object?>? args, Hlc? hlc]) {
     affectedTables.add(statement.table.tableName);
-    hlc ??= canonicalTime;
+    hlc ??= super.hlc;
     return super._rawInsert(db, statement, args, hlc);
   }
 
@@ -23,7 +22,7 @@ class TransactionSynchroflite extends TransactionCrdt
   Future<R> _rawUpdate<T, R>(T db, UpdateStatement statement,
       [List<Object?>? args, Hlc? hlc]) {
     affectedTables.add(statement.table.tableName);
-    hlc ??= canonicalTime;
+    hlc ??= super.hlc;
     return super._rawUpdate(db, statement, args, hlc);
   }
 
@@ -31,7 +30,7 @@ class TransactionSynchroflite extends TransactionCrdt
   Future<R> _rawDelete<T, R>(T db, DeleteStatement statement,
       [List<Object?>? args, Hlc? hlc]) {
     affectedTables.add(statement.table.tableName);
-    hlc ??= canonicalTime;
+    hlc ??= super.hlc;
     return super._rawDelete(db, statement, args, hlc);
   }
 
@@ -41,24 +40,24 @@ class TransactionSynchroflite extends TransactionCrdt
   }
 
   Future<int> rawUpdate(String sql, [List<Object?>? args]) {
-    return _innerRawUpdate(_txn, sql, args, canonicalTime);
+    return _innerRawUpdate(_txn, sql, args, super.hlc);
   }
 
   Future<int> rawInsert(String sql, [List<Object?>? args]) {
-    return _innerRawInsert(_txn, sql, args, canonicalTime);
+    return _innerRawInsert(_txn, sql, args, super.hlc);
   }
 
   Future<int> rawDelete(String sql, [List<Object?>? args]) {
-    return _innerRawDelete(_txn, sql, args, canonicalTime);
+    return _innerRawDelete(_txn, sql, args, super.hlc);
   }
 
   @override
   Future<void> execute(String sql, [List<Object?>? args]) async {
-    return _innerExecute(_txn, sql, () => canonicalTime, args);
+    return _innerExecute(_txn, sql, () => super.hlc, args);
   }
 
   Batch batch() =>
-      BatchSynchroflite(_txn.batch(), canonicalTime, (tables, hlc) async {
+      BatchSynchroflite(_txn.batch(), super.hlc, (tables, hlc) async {
         affectedTables.addAll(tables);
       }, inTransaction: true);
 }
