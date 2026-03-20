@@ -4,6 +4,7 @@ version: 0.1.6
 homepage: https://github.com/JanezStupar/synchroflite
 repository: https://github.com/JanezStupar/synchroflite.git
 issue_tracker: https://github.com/JanezStupar/synchroflite/issues
+publish_to: none
 
 environment:
   sdk: ^3.0.0
@@ -12,9 +13,12 @@ dependencies:
   sqflite_common: 2.5.6
   sqflite_common_ffi: 2.4.0+2
   sqflite_common_ffi_web: 1.1.1
-  sql_crdt: 3.0.3
+  sql_crdt: 
+    git:
+      url: https://github.com/VantageSoftwareSolutions/sql_crdt
+      ref: e7dce1bf3ac9ccdef4695323ff7ad1847f4ce683
   json_annotation: ^4.8.1
-  sqlparser: 0.41.1
+  sqlparser: 0.44.3
   source_span: ^1.10.0
   collection: ^1.17.2
 
