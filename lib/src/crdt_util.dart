@@ -327,7 +327,7 @@ class CrdtUtil {
       if (table.as != null) {
         reference = Reference(
           columnName: 'is_deleted',
-          entityName: table.as,
+          entityName: table.as?.name,
           schemaName: table.schemaName,
         );
       } else {
@@ -582,7 +582,7 @@ class CrdtUtil {
   }
 
   static ParseResult parseSql(String sql) {
-    final result = _sqlEngine.parse(sql);
+    final result = _sqlEngine.parse(ParserEntrypoint.statement, sql);
 
     // Warn if the query can't be parsed
     if (result.rootNode is InvalidStatement) {

@@ -10,12 +10,12 @@ const specialQueries = <String>{
 // There are some queries where it doesn't make sense to add CRDT columns
 bool isSpecialQuery(ParseResult result) {
   // Pragma queries don't need to be intercepted and transformed
-  if (result.sql.toUpperCase().startsWith('PRAGMA')) {
+  if (result.sql.text.toUpperCase().startsWith('PRAGMA')) {
     return true;
   }
 
   //  IF the query is on the lookup table, we don't need to add CRDT columns
-  if (specialQueries.contains(result.sql.toUpperCase())) {
+  if (specialQueries.contains(result.sql.text.toUpperCase())) {
     return true;
   }
   ;
