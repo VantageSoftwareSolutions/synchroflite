@@ -9,12 +9,12 @@ environment:
   sdk: ^3.0.0
 
 dependencies:
-  sqflite_common: ^2.5.0
-  sqflite_common_ffi: ^2.3.0+2
-  sqflite_common_ffi_web: ^0.4.0
-  sql_crdt: ^3.0.2
+  sqflite_common: 2.5.6
+  sqflite_common_ffi: 2.4.0+2
+  sqflite_common_ffi_web: 1.1.1
+  sql_crdt: 3.0.3
   json_annotation: ^4.8.1
-  sqlparser: ^0.39.2
+  sqlparser: 0.41.1
   source_span: ^1.10.0
   collection: ^1.17.2
 
