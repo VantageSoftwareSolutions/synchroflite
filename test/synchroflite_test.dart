@@ -3,10 +3,13 @@
 // This file is copied from sqlite_crdt package:
 // https://github.com/cachapa/sqlite_crdt
 // SPDX-License-Identifier: Apache-2.0
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:synchroflite/synchroflite.dart';
 import 'package:test/test.dart';
 
 void main() {
+  sqfliteFfiInit();
+  databaseFactory = databaseFactoryFfi;
   group('Basic', () {
     late SqlCrdt crdt;
 
