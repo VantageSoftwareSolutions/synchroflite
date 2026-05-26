@@ -117,6 +117,9 @@ class CrdtArgParser {
         } else if (element is ExpressionResultColumn &&
             element.expression is Literal) {
           continue;
+        } else if (element is ExpressionResultColumn &&
+            element.expression is SubQuery) {
+          continue;
         } else {
           ref = element;
         }
