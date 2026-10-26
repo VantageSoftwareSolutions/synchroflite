@@ -16,7 +16,7 @@ dependencies:
   sql_crdt: 
     git:
       url: https://github.com/VantageSoftwareSolutions/sql_crdt
-      ref: fbc231f2517f00e5dad9c82ab00b898925531d91
+      ref: 8385b299adef46729063691ca681714fc0ee8374
   json_annotation: ^4.8.1
   sqlparser: ">=0.44.0 <0.46.0"
   source_span: ^1.10.0
