@@ -10,15 +10,15 @@ environment:
   sdk: ^3.10.0
 
 dependencies:
-  sqflite_common: 2.5.6
-  sqflite_common_ffi: 2.4.0+2
-  sqflite_common_ffi_web: 1.1.1
+  sqflite_common: ^2.5.6
+  sqflite_common_ffi: ^2.4.0
+  sqflite_common_ffi_web: ^1.1.1
   sql_crdt: 
     git:
       url: https://github.com/VantageSoftwareSolutions/sql_crdt
       ref: fbc231f2517f00e5dad9c82ab00b898925531d91
   json_annotation: ^4.8.1
-  sqlparser: 0.44.3
+  sqlparser: ">=0.44.0 <0.46.0"
   source_span: ^1.10.0
   collection: ^1.17.2
 
